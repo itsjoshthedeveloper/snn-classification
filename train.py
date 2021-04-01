@@ -27,6 +27,7 @@ import sys
 import os
 
 from utils import *
+from setup import setup
 from test import test
 
 # os.environ['PYTHONWARNINGS'] = 'ignore:semaphore_tracker:UserWarning'

@@ -28,6 +28,7 @@ from glob import glob
 import os
 
 from utils import *
+from setup import setup
 
 def test(phase, f, config, args, testloader, model, state=None, epoch=0, max_acc=0, start_time=None, num_plot=16):
 

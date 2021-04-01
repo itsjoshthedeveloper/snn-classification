@@ -4,7 +4,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from spikes import *
+from .spikes import *
 
 # TODO: figure out architecture
 
