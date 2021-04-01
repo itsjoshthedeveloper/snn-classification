@@ -1,0 +1,8 @@
+logs
+check.py
+trained_models/
+*.bat
+*.sh
+
+__pycache__
+.vscode
