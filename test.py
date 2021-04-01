@@ -165,6 +165,7 @@ if __name__ == '__main__':
     p.add_argument('--num_workers',     default=4,                  type=int,       help='number of workers')
 
     # Wandb and file
+    p.add_argument('--wandb_mode',      default='online',           type=str,       help='wandb mode', choices=['online','offline','disabled'])
     p.add_argument('--project',         default='snn',              type=str,       help='project name')
     p.add_argument('--file_name',       default='',                 type=str,       help='Add-on for the file name')
 

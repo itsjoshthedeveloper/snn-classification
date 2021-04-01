@@ -139,6 +139,7 @@ def setup(phase, args):
         tags=tags,
         force=True,
         config=config,
+        mode=args.wandb_mode
     )
 
     # Model identifier
