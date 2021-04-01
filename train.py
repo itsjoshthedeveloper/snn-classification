@@ -42,18 +42,18 @@ p.add_argument('--num_workers',     default=4,                  type=int,       
 
 # Wandb and file
 p.add_argument('--wandb_mode',      default='online',           type=str,       help='wandb mode', choices=['online','offline','disabled'])
-p.add_argument('--project',         default='snn',              type=str,       help='project name')
+p.add_argument('--project',         default='snn-classif',      type=str,       help='project name')
 p.add_argument('--file_name',       default='',                 type=str,       help='Add-on for the file name')
 
 # Model
 p.add_argument('--model_type',      default='snn',              type=str,       help='model type', choices=['ann','snn'])
-p.add_argument('--arch',            default='vgg16',            type=str,       help='architecture', choices=['vgg5','vgg9','vgg11','vgg16'])
+p.add_argument('--arch',            default='vgg5',             type=str,       help='architecture', choices=['vgg5','vgg9','vgg11','vgg16'])
 p.add_argument('--kernel_size',     default=3,                  type=int,       help='filter size for the conv layers')
 p.add_argument('--pretrained',      default=True, const=True,   type=str2bool,  help='use pretrained parameters from torchvision if possible', nargs='?')
 
 # Dataset
 p.add_argument('--dataset',         default='cifar10',          type=str,       help='dataset', choices=['cifar10','cifar100'])
-p.add_argument('--batch_size',      default=16,                 type=int,       help='Batch size')
+p.add_argument('--batch_size',      default=64,                 type=int,       help='Batch size')
 p.add_argument('--img_size',        default=64,                 type=int,       help='Image size')
 p.add_argument('--augment',         action='store_true',                        help='turn on data augmentation')
 p.add_argument('--attack',          default='',                 type=str,       help='adversarial attack', choices=['saltpepper','gaussiannoise'])
@@ -70,13 +70,12 @@ p.add_argument('--leak_mem',        default=0.99,               type=float,     
 p.add_argument('--def_threshold',   default=1.0,                type=float,     help='Membrane threshold')
 
 # Visualization
-p.add_argument('--log',             action='store_true',                        help='to print the output on terminal or to log file')
 p.add_argument('--plot',            action='store_true',                        help='plot images')
 p.add_argument('--plot_batch',      default=1,                  type=int,       help='batch to plot')
 p.add_argument('--train_display',   default=1,                  type=int,       help='freq (in epochs) for printing training progress')
 p.add_argument('--test_display',    default=10,                 type=int,       help='freq (in epochs) for evaluating model during training')
 p.add_argument('--see_model',       action='store_true',                        help='see model structure')
-p.add_argument('--info',            action='store_true',                        help='see training info')
+p.add_argument('--info',            default=True, const=True,   type=str2bool,  help='see training info', nargs='?')
 
 # Dev tools
 p.add_argument('--debug',           action='store_true',                        help='enable debugging mode')

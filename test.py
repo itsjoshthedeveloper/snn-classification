@@ -188,13 +188,12 @@ if __name__ == '__main__':
     p.add_argument('--reset_thresholds',action='store_true',                        help='find new thresholds for this number of timesteps')
 
     # Visualization
-    p.add_argument('--log',             action='store_true',                        help='to print the output on terminal or to log file')
     p.add_argument('--plot',            action='store_true',                        help='plot images')
     p.add_argument('--plot_batch',      default=1,                  type=int,       help='batch to plot')
     p.add_argument('--plot_labels',     default=True, const=True,   type=str2bool,  help='plot images with labels', nargs='?')
     p.add_argument('--max_act',         default='',                 type=str,       help='only get max activations', choices=['pixel-img','channel-norm','pixel-norm'])
     p.add_argument('--see_model',       action='store_true',                        help='see model structure')
-    p.add_argument('--info',            action='store_true',                        help='see training info')
+    p.add_argument('--info',            default=True, const=True,   type=str2bool,  help='see training info', nargs='?')
 
     # Dev tools
     p.add_argument('--debug',           action='store_true',                        help='enable debugging mode')
