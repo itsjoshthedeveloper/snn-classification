@@ -109,7 +109,7 @@ def test(phase, f, config, args, testloader, model, state=None, epoch=0, max_acc
             torch.onnx.export(model, data, filename, export_params=True, opset_version=11)
         
         if phase == 'train':
-            identifier = '{}_examples'.format('epoch' + str(epoch))
+            identifier = 'examples'.format('epoch' + str(epoch))
         elif phase == 'test':
             if config.attack:
                 identifier = '{}_{}_examples'.format(config.attack, config.atk_factor)

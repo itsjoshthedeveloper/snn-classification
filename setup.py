@@ -259,7 +259,7 @@ def setup(phase, args):
     # Prepare state to be saved with trained model
     if phase == 'train':
         state = {
-            'config': config
+            'config': config.as_dict()
         }
 
     if phase == 'train':

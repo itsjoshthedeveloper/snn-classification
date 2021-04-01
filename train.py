@@ -129,8 +129,7 @@ with run:
             loss.backward()
             optimizer.step()
 
-            if args.debug:
-                f.write('Epoch {:03d}/{:03d} | Batch progress: {:05.2f}% [{:04d}/{:04d}]'.format(epoch, config.epochs, round((batch_idx+1)/len(trainloader)*100, 2), batch_idx+1, len(trainloader)), end='\r')
+            f.write('Epoch {:03d}/{:03d} | Batch progress: {:05.2f}% [{:04d}/{:04d}]'.format(epoch, config.epochs, round((batch_idx+1)/len(trainloader)*100, 2), batch_idx+1, len(trainloader)), end='\r')
 
             if args.first and batch_idx == 9:
                 break

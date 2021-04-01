@@ -11,11 +11,11 @@ class File():
     def write(self, msg, terminal=False, start='', end='\n', r_white=False):
         if r_white:
             msg = msg + '                                        '
-        full_msg = '{}{}{}'.format(start, msg, end)
+        msg = '{}{}'.format(start, msg)
         if self.mode == 'file':
-            self.f.write(full_msg)
+            self.f.write(msg + end)
         if self.mode == 'sys' or (terminal and self.mode=='file'):
-            print(full_msg, end='', flush=('\r' in end))
+            print(msg, end=end, flush=('\r' in end))
 
 def find_nth(haystack, needle, n):
     if n == 0:
