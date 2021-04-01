@@ -206,7 +206,7 @@ class SNN_VGG(nn.Module):
             if find_max_mem and max_mem_layer < len(self.features):
                 continue
 
-            out_prev = out_prev.reshape(self.batch_size, -1)
+            out_prev = out_prev.reshape(N, -1)
             prev = len(self.features)
 
             for k in range(len(self.classifier) - 1):

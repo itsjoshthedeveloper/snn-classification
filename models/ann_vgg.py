@@ -123,6 +123,7 @@ class ANN_VGG(nn.Module):
                     m.bias.data.zero_()
 
     def forward(self, x):
+        N, C, H, W = x.size()
         out = x
 
         for k in range(len(self.features)):
@@ -131,6 +132,8 @@ class ANN_VGG(nn.Module):
 
             if str(k) in self.pool_features.keys():
                 out = self.pool_features[str(k)](out)
+
+        out = out.reshape(N, -1)
 
         for k in range(len(self.classifier) - 1):
             out = self.classifier[k](out)
