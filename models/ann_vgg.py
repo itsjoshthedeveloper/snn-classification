@@ -56,7 +56,7 @@ class ANN_VGG(nn.Module):
         stride = 1
         padding = (self.ksize-1)//2
 
-        in_channels = self.dataset.input_dim
+        in_channels = self.dataset['input_dim']
         layer = 0
         divisor = 1
         layers, self.pool_features, relu_layers = [], {}, []
@@ -90,7 +90,7 @@ class ANN_VGG(nn.Module):
             elif isinstance(x, str) and 'max' in x:
                 self.pool_classifier[str(layer-1)] = nn.MaxPool2d(kernel_size=2, stride=2)
             elif isinstance(x, str) and x == 'output':
-                layers += [nn.Linear(in_channels, self.dataset.num_cls, bias=bias_flag)]
+                layers += [nn.Linear(in_channels, self.dataset['num_cls'], bias=bias_flag)]
                 break
             else:
                 layers += [nn.Linear(in_channels, x, bias=bias_flag)]

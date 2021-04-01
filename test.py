@@ -128,12 +128,12 @@ def test(phase, f, config, args, testloader, model, state=None, epoch=0, max_acc
                 plt.yticks([], [])
 
                 if phase == 'test' and args.plot_labels:
-                    plt.title("label: {}".format(config.dataset.labels[label]), fontsize=8)
+                    plt.title("label: {}".format(config.dataset['labels'][label]), fontsize=8)
 
                 image = image.transpose(1,2,0)
                 plt.imshow(np.clip(image, 0, 1))
 
-                plt.xlabel("pred: {}".format(config.dataset.labels[pred]), fontsize=8)
+                plt.xlabel("pred: {}".format(config.dataset['labels'][pred]), fontsize=8)
 
             plt.suptitle('{}_{}'.format(config.identifier, identifier), fontsize=16)
 
@@ -142,7 +142,7 @@ def test(phase, f, config, args, testloader, model, state=None, epoch=0, max_acc
             img_list = []
             for i, (image, pred, label) in enumerate(examples):
                 image = image.transpose(1,2,0)
-                caption = '{} [{}]'.format(config.dataset.labels[pred], config.dataset.labels[label])
+                caption = '{} [{}]'.format(config.dataset['labels'][pred], config.dataset['labels'][label])
 
                 img_list.append(wandb.Image(image, caption=caption))
 

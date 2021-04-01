@@ -9,7 +9,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
-import torchvision
+from torchvision import datasets, transforms, models
 from   torch.utils.data.dataloader import DataLoader
 
 import wandb
@@ -65,9 +65,9 @@ def setup(phase, args):
             lr                  = args.lr,
             optimizer           = args.optimizer,
             # LIF neuron
-            timesteps           = (args.timesteps if model_type == 'snn' else None),
-            leak_mem            = (args.leak_mem if model_type == 'snn' else None),
-            def_threshold       = (args.def_threshold if model_type == 'snn' else None),
+            timesteps           = (args.timesteps if args.model_type == 'snn' else None),
+            leak_mem            = (args.leak_mem if args.model_type == 'snn' else None),
+            def_threshold       = (args.def_threshold if args.model_type == 'snn' else None),
             scaling_factor      = None,
             # Visualization
             plot_batch          = args.plot_batch,
@@ -81,13 +81,14 @@ def setup(phase, args):
         if hasRunId:
             init_arg += 1
 
+        model_type = ('snn' if conversion else find_arg(model_path, model_dir, init_arg))
         dataset = find_arg(model_path, model_dir, init_arg+2)
 
         config = dict(
             # Model
             model_path          = model_path,
             conversion          = conversion,
-            model_type          = ('snn' if conversion else find_arg(model_path, model_dir, init_arg)),
+            model_type          = model_type,
             architecture        = (find_arg(model_path, model_dir, init_arg+1).lower()),
             kernel_size         = args.kernel_size,
             pretrained          = None,
@@ -143,8 +144,8 @@ def setup(phase, args):
     )
 
     # Model identifier
-    identifier = createIdentifier((date, run.name, wandb.config.model_type, wandb.config.architecture, wandb.config.dataset.name, args.file_name))
-    wandb.config.identifier = identifier
+    identifier = createIdentifier((date, run.name, wandb.config.model_type, wandb.config.architecture, wandb.config.dataset['name'], args.file_name))
+    wandb.config.update({'identifier': identifier})
 
     config = wandb.config
 
@@ -161,35 +162,38 @@ def setup(phase, args):
             f.write('==== Converting ANN -> SNN [layer-wise thresholding] ====')
     
     if args.info:
-        f.write('=== [{}] CONFIGURATION ==='.format(run.project), start='\n')
-        for param in vars(config):
-            f.write('\t {:20} : {}'.format(param, getattr(config, param)))
+        f.write('=== [{}] CONFIGURATION ==='.format(run.name), start='\n')
+        for key in config.keys():
+            if key == 'dataset':
+                f.write('\t {:20} : {}'.format(key, getattr(config, key)['name']))
+            else:
+                f.write('\t {:20} : {}'.format(key, getattr(config, key)))
 
     #--------------------------------------------------
     # Load dataset
     #--------------------------------------------------
-    if config.dataset.name == 'CIFAR100':
-        normalize       = transforms.Normalize((0.5071,0.4867,0.4408), (0.2675,0.2565,0.2761))
+    if config.dataset['name'] == 'cifar100':
+        normalize       = transforms.Normalize((0.5071, 0.4867, 0.4408), (0.2675, 0.2565, 0.2761))
 
         if phase == 'train' or config.conversion:
             transform_train = transforms.Compose([transforms.RandomCrop(32, padding=4), transforms.RandomHorizontalFlip(), transforms.ToTensor(), normalize])
-            train_dataset   = datasets.CIFAR100(root=config.dataset.path, train=True, download=True, transform=transform_train)
+            train_dataset   = datasets.CIFAR100(root=config.dataset['path'], train=True, download=True, transform=transform_train)
             train_loader    = torch.utils.data.DataLoader(dataset=train_dataset, batch_size=config.batch_size, shuffle=True)
 
         transform_test  = transforms.Compose([transforms.ToTensor(), normalize])
-        test_dataset    = datasets.CIFAR100(root=config.dataset.path, train=False, download=True, transform=transform_test)
+        test_dataset    = datasets.CIFAR100(root=config.dataset['path'], train=False, download=True, transform=transform_test)
         test_loader     = torch.utils.data.DataLoader(dataset=test_dataset, batch_size=config.batch_size_test, shuffle=False)
     
-    elif config.dataset.name == 'CIFAR10': 
+    elif config.dataset['name'] == 'cifar10':
         normalize       = transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))
 
         if phase == 'train' or config.conversion:
             transform_train = transforms.Compose([transforms.RandomCrop(32, padding=4), transforms.RandomHorizontalFlip(), transforms.ToTensor(), normalize])
-            train_dataset   = datasets.CIFAR10(root=config.dataset.path, train=True, download=True, transform=transform_train)
+            train_dataset   = datasets.CIFAR10(root=config.dataset['path'], train=True, download=True, transform=transform_train)
             train_loader    = torch.utils.data.DataLoader(dataset=train_dataset, batch_size=config.batch_size, shuffle=True)
 
         transform_test  = transforms.Compose([transforms.ToTensor(), normalize])
-        test_dataset    = datasets.CIFAR10(root=config.dataset.path, train=False, download=True, transform=transform_test)
+        test_dataset    = datasets.CIFAR10(root=config.dataset['path'], train=False, download=True, transform=transform_test)
         test_loader     = torch.utils.data.DataLoader(dataset=test_dataset, batch_size=config.batch_size_test, shuffle=False)
     else:
         raise RuntimeError("dataset not valid..")

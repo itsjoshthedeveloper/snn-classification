@@ -11,24 +11,37 @@ img_sizes = dict(
     cifar100=(64, 64)
 )
 
+# Dataset Config Class
+class DatasetConfig():
+
+    def __init__(self, name, input_dim):
+        self.name = name
+        self.labels = labels[self.name]
+        self.num_cls = len(labels[self.name])
+        self.input_dim = 3
+        self.path = '/project/panda/shared/' + self.name
+        self.img_size = img_sizes[self.name]
+
+    def dictionary(self):
+        return dict(
+            name=self.name,
+            labels=self.labels,
+            num_cls=self.num_cls,
+            input_dim=self.input_dim,
+            path=self.path,
+            img_size=self.img_size
+        )
+
 # dataset configs
 dataset_cfg = dict(
-    cifar10=dict(
+    cifar10=DatasetConfig(
         name='cifar10',
-        labels=labels['cifar10'],
-        num_cls=len(labels['cifar10']),
         input_dim=3,
-        path='../data/CIFAR/',
-        img_sizes=img_sizes['cifar10']
-    ),
-    cifar100=dict(
+    ).dictionary(),
+    cifar100=DatasetConfig(
         name='cifar100',
-        labels=labels['cifar100'],
-        num_cls=len(labels['cifar100']),
         input_dim=3,
-        path='../data/CIFAR/',
-        img_sizes=img_sizes['cifar100']
-    )
+    ).dictionary()
 )
 
 # paths

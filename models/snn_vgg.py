@@ -63,7 +63,7 @@ class SNN_VGG(nn.Module):
         stride = 1
         padding = (self.ksize-1)//2
 
-        in_channels = self.dataset.input_dim
+        in_channels = self.dataset['input_dim']
         layer = 0
         divisor = 1
         layers, self.pool_features = [], {}
@@ -99,7 +99,7 @@ class SNN_VGG(nn.Module):
                 self.pool_classifier[str(layer-1)] = nn.MaxPool2d(kernel_size=2, stride=2)
                 continue
             elif isinstance(x, str) and x == 'output':
-                layers += [nn.Linear(in_channels, self.dataset.num_cls, bias=bias_flag)]
+                layers += [nn.Linear(in_channels, self.dataset['num_cls'], bias=bias_flag)]
                 break
             else:
                 layers += [nn.Linear(in_channels, x, bias=bias_flag)]
@@ -165,7 +165,7 @@ class SNN_VGG(nn.Module):
         layers = []
         for x in (cfg_classifier[self.architecture]):
             if isinstance(x, str) and x == 'output':
-                x = self.dataset.num_cls
+                x = self.dataset['num_cls']
             elif not isinstance(x, int):
                 continue
             layers += [torch.zeros(N, x).cuda()]
