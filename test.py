@@ -81,7 +81,7 @@ def test(phase, f, config, args, testloader, model, state=None, epoch=0, max_acc
                 break
 
             if phase == 'test':
-                print('Evaluating progress: {}% [Batch {}/{}]'.format(round((batch_idx + 1) / len(testloader) * 100, 2), batch_idx + 1, len(testloader)), end='\r', flush=True)
+                print('Evaluating progress: {:05.2f}% [Batch {:04d}/{:04d}]'.format(round((batch_idx + 1) / len(testloader) * 100, 2), batch_idx + 1, len(testloader)), end='\r', flush=True)
 
     if phase == 'test' and args.max_act:
         plot_max_activations(f, args, recorder)
@@ -150,7 +150,7 @@ def test(phase, f, config, args, testloader, model, state=None, epoch=0, max_acc
 
     if phase == 'train':
         duration = datetime.timedelta(seconds=(datetime.datetime.now() - start_time).seconds)
-        f.write('--------------- Evaluation -> mean_iou: {:.6f}, best: {:.6f}, time: {}'.format(test_acc, max_acc, duration), terminal=True)
+        f.write('--------------- Evaluation -> accuracy: {:.3f}, best: {:.3f}, time: {}'.format(test_acc, max_acc, duration), terminal=True)
         wandb.log({'accuracy': test_acc, 'max_acc': max_acc, 'test_duration_mins': (duration.seconds / 60)}, step=epoch)
 
     return max_acc
@@ -167,7 +167,7 @@ if __name__ == '__main__':
 
     # Wandb and file
     p.add_argument('--wandb_mode',      default='online',           type=str,       help='wandb mode', choices=['online','offline','disabled'])
-    p.add_argument('--project',         default='snn',              type=str,       help='project name')
+    p.add_argument('--project',         default='snn-classif',      type=str,       help='project name')
     p.add_argument('--file_name',       default='',                 type=str,       help='Add-on for the file name')
 
     # Model
@@ -175,8 +175,8 @@ if __name__ == '__main__':
     p.add_argument('--kernel_size',     default=3,                  type=int,       help='filter size for the conv layers')
 
     # Dataset
-    p.add_argument('--batch_size',      default=16,                 type=int,       help='Batch size')
-    p.add_argument('--img_size',        default=64,                 type=int,       help='Image size')
+    p.add_argument('--batch_size',      default=64,                 type=int,       help='Batch size')
+    p.add_argument('--img_size',        default=32,                 type=int,       help='Image size')
     p.add_argument('--augment',         action='store_true',                        help='turn on data augmentation')
     p.add_argument('--attack',          default='',                 type=str,       help='adversarial attack', choices=['saltpepper','gaussiannoise'])
     p.add_argument('--atk_factor',      default=None,               type=float,     help='Attack constant (sigma/p/scale)', nargs='+')

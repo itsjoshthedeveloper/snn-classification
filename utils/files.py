@@ -12,9 +12,10 @@ class File():
         if r_white:
             msg = msg + '                                        '
         full_msg = '{}{}{}'.format(start, msg, end)
-        self.f.write(full_msg)
-        if terminal and self.mode=='file':
-            print(full_msg)
+        if self.mode == 'file':
+            self.f.write(full_msg)
+        if self.mode == 'sys' or (terminal and self.mode=='file'):
+            print(full_msg, end='', flush=('\r' in end))
 
 def find_nth(haystack, needle, n):
     if n == 0:

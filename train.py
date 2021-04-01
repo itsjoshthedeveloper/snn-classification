@@ -55,7 +55,7 @@ p.add_argument('--pretrained',      default=True, const=True,   type=str2bool,  
 # Dataset
 p.add_argument('--dataset',         default='cifar10',          type=str,       help='dataset', choices=['cifar10','cifar100'])
 p.add_argument('--batch_size',      default=64,                 type=int,       help='Batch size')
-p.add_argument('--img_size',        default=64,                 type=int,       help='Image size')
+p.add_argument('--img_size',        default=32,                 type=int,       help='Image size')
 p.add_argument('--augment',         action='store_true',                        help='turn on data augmentation')
 p.add_argument('--attack',          default='',                 type=str,       help='adversarial attack', choices=['saltpepper','gaussiannoise'])
 p.add_argument('--atk_factor',      default=None,               type=float,     help='Attack constant (sigma/p/scale)', nargs='+')
@@ -130,20 +130,20 @@ with run:
             optimizer.step()
 
             if args.debug:
-                print('Epoch {}/{} | Training progress: {}% [{}/{}] '.format(epoch, config.epochs, round((batch_idx+1)/len(trainloader)*100, 2), batch_idx+1, len(trainloader)), end='\r', flush=True)
+                f.write('Epoch {:03d}/{:03d} | Batch progress: {:05.2f}% [{:04d}/{:04d}]'.format(epoch, config.epochs, round((batch_idx+1)/len(trainloader)*100, 2), batch_idx+1, len(trainloader)), end='\r')
 
-            if (args.first) and batch_idx == 9:
+            if args.first and batch_idx == 9:
                 break
         
-        if args.debug:
+        if args.first:
             print('')
 
         # adjust_learning_rate(optimizer, epoch, config.epochs) # ? use adjust_learning_rate?
         scheduler.step()
 
-        if args.debug or ((epoch) % args.train_display_freq == 0):
+        if args.debug or ((epoch) % args.train_display == 0):
             duration = datetime.timedelta(seconds=(datetime.datetime.now() - start_time).seconds)
-            f.write('Epoch {}/{} | Loss: {:.6f} | LR: {:.6f} [{}]'.format(epoch, config.epochs, train_loss.avg, optimizer.param_groups[0]['lr'], duration), terminal=True)
+            f.write('Training progress: {:05.2f}% [Epoch {:03d}/{:03d}] | Loss: {:.6f} | LR: {:.6f} [{}]'.format(round(((epoch/config.epochs)*100), 2), epoch, config.epochs, train_loss.avg, optimizer.param_groups[0]['lr'], duration))
             wandb.log({'epoch': epoch, 'loss': train_loss.avg, 'lr': optimizer.param_groups[0]['lr'], 'train_duration_mins': (duration.seconds / 60)}, step=epoch)
 
             if train_loss.avg < min_loss:
@@ -153,13 +153,13 @@ with run:
         if epoch == 1:
             wandb.log({'accuracy': 0, 'max_acc': max_acc}, step=epoch)
 
-        if args.debug or ((epoch) % args.test_display_freq == 0):
+        if args.first or ((epoch) % args.test_display == 0):
             max_acc = test('train', f, config, args, testloader, model, state, epoch, max_acc, start_time=start_time)
 
-        if args.first and epoch == 0:
+        if args.first and epoch == 1:
             break
 
-f.write('Highest accuracy: {:.6f}'.format(max_acc), terminal=True)
-f.write('Total script time: {}'.format(datetime.timedelta(days=(datetime.datetime.now() - now).days, seconds=(datetime.datetime.now() - now).seconds)), terminal=True)
+f.write('Highest accuracy: {:.6f}'.format(max_acc))
+f.write('Total script time: {}'.format(datetime.timedelta(days=(datetime.datetime.now() - now).days, seconds=(datetime.datetime.now() - now).seconds)))
 
 sys.exit(0)
