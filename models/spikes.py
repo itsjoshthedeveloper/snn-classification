@@ -17,7 +17,7 @@ class PoissonGenerator(nn.Module):
     def __init__(self):
         super().__init__()
 
-    def forward(self, input, rescale_fac=1.0):
+    def forward(self, inp, rescale_fac=1.0):
         rand_inp = torch.rand_like(inp).cuda()
         return torch.mul(torch.le(rand_inp * rescale_fac, torch.abs(inp)).float(), torch.sign(inp))
 

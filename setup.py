@@ -58,8 +58,8 @@ def setup(phase, args):
             batch_size_test     = args.batch_size*2,
             img_size            = (img_sizes[args.dataset] if args.img_size == -1 else (args.img_size, args.img_size)),
             augment             = args.augment,
-            attack              = None,
-            attack_const        = None,
+            attack              = (args.attack if args.attack else False),
+            atk_factor          = (args.atk_factor if (args.atk_factor or args.atk_factor == 0) else False),
             # Learning
             epochs              = args.epochs,
             lr                  = args.lr,
@@ -99,7 +99,7 @@ def setup(phase, args):
             img_size            = (img_sizes[dataset] if args.img_size == -1 else (args.img_size, args.img_size)),
             augment             = None,
             attack              = (args.attack if args.attack else False),
-            attack_const        = (args.atk_factor if (args.atk_factor or args.atk_factor == 0) else False),
+            atk_factor          = (args.atk_factor if (args.atk_factor or args.atk_factor == 0) else False),
             # Learning
             epochs              = None,
             lr                  = None,
@@ -167,7 +167,9 @@ def setup(phase, args):
             if key == 'dataset':
                 f.write('\t {:20} : {}'.format(key, getattr(config, key)['name']))
             else:
-                f.write('\t {:20} : {}'.format(key, getattr(config, key)))
+                value = getattr(config, key)
+                if value != None:
+                    f.write('\t {:20} : {}'.format(key, value))
 
     #--------------------------------------------------
     # Load dataset
