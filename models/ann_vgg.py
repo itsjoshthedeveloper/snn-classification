@@ -30,14 +30,13 @@ class ANN_VGG(nn.Module):
 
         # Architecture parameters
         self.architecture = config.architecture
-        self.bntt = config.bn
+        self.dataset = config.dataset
         self.img_size = config.img_size
         self.kernel_size = config.kernel_size
-        self.dataset = config.dataset
+        self.init = init
         
-        self._make_layers(cfg[self.architecture])
-        
-        self._init_layers(init)
+        self._make_layers()
+        self._init_layers()
 
         if config.pretrained:
             if self.architecture == 'vgg11':
@@ -50,11 +49,11 @@ class ANN_VGG(nn.Module):
                 self.features.load_state_dict(state_vgg, strict=False)
 
     
-    def _make_layers(self, cfg):
+    def _make_layers(self):
         affine_flag = True
         bias_flag = False
         stride = 1
-        padding = (self.ksize-1)//2
+        padding = (self.kernel_size-1)//2
 
         in_channels = self.dataset['input_dim']
         layer = 0
@@ -69,7 +68,7 @@ class ANN_VGG(nn.Module):
                 self.pool_features[str(layer-1)] = nn.MaxPool2d(kernel_size=2, stride=2)
                 divisor *= 2
             else:
-                layers += [nn.Conv2d(in_channels, x, kernel_size=self.ksize, padding=padding, stride=stride, bias=bias_flag)]
+                layers += [nn.Conv2d(in_channels, x, kernel_size=self.kernel_size, padding=padding, stride=stride, bias=bias_flag)]
                 relu_layers += [nn.ReLU(inplace=True)]
                 in_channels = x
                 layer += 1
@@ -102,22 +101,22 @@ class ANN_VGG(nn.Module):
         self.pool_classifier = nn.ModuleDict(self.pool_classifier)
         self.relu_classifier = nn.ModuleList(relu_layers)
 
-    def _init_layers(self, init):
+    def _init_layers(self):
         # Initialize the firing thresholds and weights of all the layers
         for m in self.modules():
             if (isinstance(m, nn.Conv2d)):
-                if init == 'kaiming':
+                if self.init == 'kaiming':
                     nn.init.kaiming_normal_(m.weight, nonlinearity='relu')
-                elif init == 'xavier':
+                elif self.init == 'xavier':
                     torch.nn.init.xavier_uniform_(m.weight, gain=2)
 
                 if m.bias is not None:
                     m.bias.data.zero_()
 
             elif (isinstance(m, nn.Linear)):
-                if init == 'kaiming':
+                if self.init == 'kaiming':
                     nn.init.kaiming_normal_(m.weight, nonlinearity='relu')
-                elif init == 'xavier':
+                elif self.init == 'xavier':
                     torch.nn.init.xavier_uniform_(m.weight, gain=2)
 
                 if m.bias is not None:

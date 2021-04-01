@@ -30,10 +30,10 @@ class SNN_VGG(nn.Module):
 
         # Architecture parameters
         self.architecture = config.architecture
-        self.bntt = config.bn
+        self.dataset = config.dataset
         self.img_size = config.img_size
         self.kernel_size = config.kernel_size
-        self.dataset = config.dataset
+        self.init = init
 
         # SNN simulation parameters
         self.timesteps = config.timesteps
@@ -42,9 +42,8 @@ class SNN_VGG(nn.Module):
         self.spike_fn       = init_spike_fn(grad_type)
         self.input_layer 	= PoissonGenerator()
         
-        self._make_layers(cfg[self.architecture])
-        
-        self._init_layers(init)
+        self._make_layers()
+        self._init_layers()
 
         if config.pretrained:
             if self.architecture == 'vgg11':
@@ -57,18 +56,18 @@ class SNN_VGG(nn.Module):
                 self.features.load_state_dict(state_vgg, strict=False)
 
     
-    def _make_layers(self, cfg):
+    def _make_layers(self):
         affine_flag = True
         bias_flag = False
         stride = 1
-        padding = (self.ksize-1)//2
+        padding = (self.kernel_size-1)//2
 
         in_channels = self.dataset['input_dim']
         layer = 0
         divisor = 1
         layers, self.pool_features = [], {}
         
-        for x in (cfg_features[self.arch]):
+        for x in (cfg_features[self.architecture]):
             if isinstance(x, str) and 'avg' in x:
                 self.pool_features[str(layer-1)] = nn.AvgPool2d(kernel_size=2, stride=2)
                 divisor *= 2
@@ -78,7 +77,7 @@ class SNN_VGG(nn.Module):
                 divisor *= 2
                 continue
             else:
-                layers += [nn.Conv2d(in_channels, x, kernel_size=self.ksize, padding=padding, stride=stride, bias=bias_flag)]
+                layers += [nn.Conv2d(in_channels, x, kernel_size=self.kernel_size, padding=padding, stride=stride, bias=bias_flag)]
                 in_channels = x
             layer += 1
 
@@ -91,7 +90,7 @@ class SNN_VGG(nn.Module):
         scale = self.img_size[0]//divisor
         in_channels = in_channels*scale*scale
 
-        for x in (cfg_classifier[self.arch]):
+        for x in (cfg_classifier[self.architecture]):
             if isinstance(x, str) and 'avg' in x:
                 self.pool_classifier[str(layer-1)] = nn.AvgPool2d(kernel_size=2, stride=2)
                 continue
@@ -109,15 +108,15 @@ class SNN_VGG(nn.Module):
         self.classifier = nn.ModuleList(layers)
         self.pool_classifier = nn.ModuleDict(self.pool_classifier)
 
-    def _init_layers(self, init):
+    def _init_layers(self):
         # Initialize the firing thresholds and weights of all the layers
         for m in self.modules():
             if (isinstance(m, nn.Conv2d)):
                 m.threshold = self.def_threshold
 
-                if init == 'kaiming':
+                if self.init == 'kaiming':
                     torch.nn.init.kaiming_normal_(m.weight, a=1)
-                elif init == 'xavier':
+                elif self.init == 'xavier':
                     torch.nn.init.xavier_uniform_(m.weight, gain=2)
 
                 if m.bias is not None:
@@ -129,9 +128,9 @@ class SNN_VGG(nn.Module):
             elif (isinstance(m, nn.Linear)):
                 m.threshold = self.def_threshold
 
-                if init == 'kaiming':
+                if self.init == 'kaiming':
                     torch.nn.init.kaiming_normal_(m.weight, a=1)
-                elif init == 'xavier':
+                elif self.init == 'xavier':
                     torch.nn.init.xavier_uniform_(m.weight, gain=2)
 
                 if m.bias is not None:
