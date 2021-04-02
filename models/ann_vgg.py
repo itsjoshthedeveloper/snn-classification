@@ -6,11 +6,9 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torchvision
 
-# TODO: figure out architecture
-
 cfg_features = {
     'vgg5' : [64, 'avg', 128, 128, 'avg'],
-    'vgg9':  [64, 'avg', 128, 256, 'avg', 256, 512, 'avg', 512, 'avg', 512],
+    'vgg9':  [64, 64, 'avg', 128, 128, 'avg', 256, 256, 256, 'avg'],
     'vgg11': [64, 'avg', 128, 256, 'avg', 512, 512, 'avg', 512, 'avg', 512, 512],
     'vgg13': [64, 64, 'avg', 128, 128, 'avg', 256, 256, 'avg', 512, 512, 512, 'avg', 512],
     'vgg16': [64, 64, 'avg', 128, 128, 'avg', 256, 256, 256, 'avg', 512, 512, 512, 'avg', 512, 512, 512],
@@ -19,7 +17,11 @@ cfg_features = {
 
 cfg_classifier = {
     'vgg5' : [1024, 1024, 'output'],
-    'vgg9':  [4096, 4096, 'output'],
+    'vgg9':  [1024, 1024, 'output'],
+    'vgg11':  [4096, 4096, 'output'],
+    'vgg13':  [4096, 4096, 'output'],
+    'vgg16':  [4096, 4096, 'output'],
+    'vgg19':  [4096, 4096, 'output']
 }
 
 
