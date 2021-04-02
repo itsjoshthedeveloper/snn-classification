@@ -175,7 +175,7 @@ if __name__ == '__main__':
     p.add_argument('--kernel_size',     default=3,                  type=int,       help='filter size for the conv layers')
 
     # Dataset
-    p.add_argument('--batch_size',      default=64,                 type=int,       help='Batch size')
+    p.add_argument('--batch_size',      default=128,                type=int,       help='Batch size')
     p.add_argument('--img_size',        default=32,                 type=int,       help='Image size')
     p.add_argument('--augment',         action='store_true',                        help='turn on data augmentation')
     p.add_argument('--attack',          default='',                 type=str,       help='adversarial attack', choices=['saltpepper','gaussiannoise'])

@@ -54,19 +54,19 @@ p.add_argument('--pretrained',      default=True, const=True,   type=str2bool,  
 
 # Dataset
 p.add_argument('--dataset',         default='cifar10',          type=str,       help='dataset', choices=['cifar10','cifar100'])
-p.add_argument('--batch_size',      default=64,                 type=int,       help='Batch size')
+p.add_argument('--batch_size',      default=128,                type=int,       help='Batch size')
 p.add_argument('--img_size',        default=32,                 type=int,       help='Image size')
 p.add_argument('--augment',         action='store_true',                        help='turn on data augmentation')
 p.add_argument('--attack',          default='',                 type=str,       help='adversarial attack', choices=['saltpepper','gaussiannoise'])
 p.add_argument('--atk_factor',      default=None,               type=float,     help='Attack constant (sigma/p/scale)', nargs='+')
 
 # Learning
-p.add_argument('--epochs',          default=60,                 type=int,       help='Number of epochs')
-p.add_argument('--lr',              default=0.003,              type=float,     help='Learning rate')
-p.add_argument('--optimizer',       default='adam',             type=str,       help='optimizer', choices=['adam','sgd'])
+p.add_argument('--epochs',          default=120,                type=int,       help='Number of epochs')
+p.add_argument('--lr',              default=0.01,               type=float,     help='Learning rate')
+p.add_argument('--optimizer',       default='sgd',              type=str,       help='optimizer', choices=['adam','sgd'])
 
 # LIF neuron
-p.add_argument('--timesteps',       default=20,                 type=int,       help='Number of time-step')
+p.add_argument('--timesteps',       default=25,                 type=int,       help='Number of time-step')
 p.add_argument('--leak_mem',        default=0.99,               type=float,     help='Leak_mem')
 p.add_argument('--def_threshold',   default=1.0,                type=float,     help='Membrane threshold')
 
