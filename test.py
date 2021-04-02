@@ -105,8 +105,8 @@ def test(phase, f, config, args, testloader, model, state=None, epoch=0, max_acc
             filename = os.path.join(wandb.run.dir, config.identifier+'.pth')
             torch.save(state, filename)
 
-            filename = os.path.join(wandb.run.dir, config.identifier+'.onnx')
-            torch.onnx.export(model, data, filename, export_params=True, opset_version=11)
+            # filename = os.path.join(wandb.run.dir, config.identifier+'.onnx')
+            # torch.onnx.export(model, data, filename, export_params=True, opset_version=11)
         
         if phase == 'train':
             identifier = 'examples'.format('epoch' + str(epoch))
