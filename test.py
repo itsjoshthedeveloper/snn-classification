@@ -6,9 +6,6 @@
 # Imports
 #--------------------------------------------------
 import torch
-import torch.nn as nn
-import torch.nn.functional as F
-from   torch.utils.data.dataloader import DataLoader
 import torch.backends.cudnn as cudnn
 import torchfunc
 
@@ -18,15 +15,13 @@ cudnn.deterministic = True
 
 import wandb
 
-from PIL import ImageFile
-ImageFile.LOAD_TRUNCATED_IMAGES = True
 import argparse
 import sys
-from matplotlib import pyplot as plt
-import numpy as np
-import datetime
-from glob import glob
 import os
+import datetime
+import numpy as np
+from matplotlib import pyplot as plt
+from glob import glob
 
 from utils import *
 from setup import setup

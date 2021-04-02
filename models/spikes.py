@@ -21,8 +21,6 @@ class PoissonGenerator(nn.Module):
         rand_inp = torch.rand_like(inp).cuda()
         return torch.mul(torch.le(rand_inp * rescale_fac, torch.abs(inp)).float(), torch.sign(inp))
 
-# ? STDB SPIKE?
-
 
 # --------------------------------------------------
 # Spiking neuron with fast-sigmoid surrogate gradient

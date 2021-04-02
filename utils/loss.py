@@ -16,11 +16,6 @@ def accuracy(outputs, target, topk=(1,)):
             res.append(correct_k.mul_(100.0 / batch_size))
         return res
 
-def adjust_learning_rate(optimizer, cur_epoch, max_epoch):
-    if cur_epoch == (max_epoch*0.5) or cur_epoch == (max_epoch*0.7) or cur_epoch==(max_epoch*0.9):
-        for param_group in optimizer.param_groups:
-            param_group['lr'] /= 10
-
 class AverageMeter(object):
     """
     Computes and stores the average and current value

@@ -6,11 +6,6 @@
 # Imports
 #--------------------------------------------------
 import torch
-import torch.nn as nn
-import torch.nn.functional as F
-import torch.optim as optim
-from   torch.utils.data.dataloader import DataLoader
-from torch.autograd import Variable
 import torch.backends.cudnn as cudnn
 
 cudnn.enabled = False
@@ -19,19 +14,15 @@ cudnn.deterministic = True
 
 import wandb
 
-from PIL import ImageFile
-ImageFile.LOAD_TRUNCATED_IMAGES = True
 import argparse
-import numpy as np
-import datetime
 import sys
 import os
+import datetime
+import numpy as np
 
 from utils import *
 from setup import setup
 from test import test
-
-# os.environ['PYTHONWARNINGS'] = 'ignore:semaphore_tracker:UserWarning'
 
 #--------------------------------------------------
 # Parse input arguments
@@ -138,7 +129,6 @@ with run:
         if args.first:
             print('')
 
-        # adjust_learning_rate(optimizer, epoch, config.epochs) # ? use adjust_learning_rate?
         scheduler.step()
 
         if args.debug or ((epoch) % args.train_display == 0):

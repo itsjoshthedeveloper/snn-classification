@@ -7,17 +7,16 @@
 #--------------------------------------------------
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 import torch.optim as optim
-from torchvision import datasets, transforms, models
-from   torch.utils.data.dataloader import DataLoader
+from torchvision import datasets, transforms
+from torch.utils.data.dataloader import DataLoader
 
 import wandb
 
-import numpy as np
-import datetime
 import sys
 import os
+import datetime
+import numpy as np
 
 from utils import *
 from models import *
@@ -180,11 +179,11 @@ def setup(phase, args):
         if phase == 'train' or config.conversion:
             transform_train = transforms.Compose([transforms.RandomCrop(config.img_size, padding=4), transforms.RandomHorizontalFlip(), transforms.ToTensor(), normalize])
             train_dataset   = datasets.CIFAR100(root=config.dataset['path'], train=True, download=True, transform=transform_train)
-            trainloader    = torch.utils.data.DataLoader(dataset=train_dataset, batch_size=config.batch_size, shuffle=True)
+            trainloader    = DataLoader(dataset=train_dataset, batch_size=config.batch_size, shuffle=True)
 
         transform_test  = transforms.Compose([transforms.ToTensor(), normalize])
         test_dataset    = datasets.CIFAR100(root=config.dataset['path'], train=False, download=True, transform=transform_test)
-        testloader     = torch.utils.data.DataLoader(dataset=test_dataset, batch_size=config.batch_size_test, shuffle=False)
+        testloader     = DataLoader(dataset=test_dataset, batch_size=config.batch_size_test, shuffle=False)
     
     elif config.dataset['name'] == 'cifar10':
         normalize       = transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))
@@ -192,11 +191,11 @@ def setup(phase, args):
         if phase == 'train' or config.conversion:
             transform_train = transforms.Compose([transforms.RandomCrop(config.img_size, padding=4), transforms.RandomHorizontalFlip(), transforms.ToTensor(), normalize])
             train_dataset   = datasets.CIFAR10(root=config.dataset['path'], train=True, download=True, transform=transform_train)
-            trainloader    = torch.utils.data.DataLoader(dataset=train_dataset, batch_size=config.batch_size, shuffle=True)
+            trainloader    = DataLoader(dataset=train_dataset, batch_size=config.batch_size, shuffle=True)
 
         transform_test  = transforms.Compose([transforms.ToTensor(), normalize])
         test_dataset    = datasets.CIFAR10(root=config.dataset['path'], train=False, download=True, transform=transform_test)
-        testloader     = torch.utils.data.DataLoader(dataset=test_dataset, batch_size=config.batch_size_test, shuffle=False)
+        testloader     = DataLoader(dataset=test_dataset, batch_size=config.batch_size_test, shuffle=False)
     else:
         raise RuntimeError("dataset not valid..")
 

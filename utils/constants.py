@@ -1,4 +1,3 @@
-
 # dataset labels
 labels = dict(
     cifar10=['airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck'],
