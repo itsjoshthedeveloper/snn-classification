@@ -246,11 +246,12 @@ def setup(phase, args):
         if config.optimizer == 'adam':
             optimizer = optim.Adam(model.parameters(), lr=config.lr, amsgrad=True, weight_decay=5e-4) # ? Should we use amsgrad and weight_decay for adam?
         elif config.optimizer == 'sgd':
-            optimizer = optim.SGD(model.parameters(), lr=config.lr, momentum=0.9, weight_decay=5e-4)
+            optimizer = optim.SGD(model.parameters(), lr=config.lr, momentum=0.9, weight_decay=5e-4) # ? weight_decay 1e-4 or 5e-4?
         else:
             raise RuntimeError("optimizer not valid..")
 
-        scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=([0.5, 0.8]*config.epochs), gamma=0.1)
+        milestones = [int(milestone*config.epochs) for milestone in [0.5, 0.8]]
+        scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=milestones, gamma=0.1)
 
     #--------------------------------------------------
     # Prepare state objects
