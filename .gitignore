@@ -1,8 +1,9 @@
-logs
-check.py
+logs/
 trained_models/
+resources/
 *.bat
 *.sh
+check.py
 
 __pycache__
 .vscode
