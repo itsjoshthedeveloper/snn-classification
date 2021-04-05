@@ -192,7 +192,7 @@ if __name__ == '__main__':
     p.add_argument('--first',           action='store_true',                        help='only debug first epoch and first ten batches')
 
     global args
-    args = parser.parse_args()
+    args = p.parse_args()
 
     #--------------------------------------------------
     # Initialize arguments
@@ -206,14 +206,14 @@ if __name__ == '__main__':
 
     scriptStart = datetime.datetime.now()
 
-    if args.pretrained_model and args.pretrained_model.isdigit():
-        args.pretrained_model = int(args.pretrained_model)
+    if args.model_path and args.model_path.isdigit():
+        args.model_path = int(args.model_path)
 
-    if isinstance(args.pretrained_model, str) and args.pretrained_model:
-        args.pretrained_model = (args.model_dir + args.pretrained_model)
+    if isinstance(args.model_path, str) and args.model_path:
+        args.model_path = (model_dir + args.model_path)
     else:
-        pretrained_models = sorted(glob(args.model_dir + '*.pth'))
-        val = args.pretrained_model
+        pretrained_models = sorted(glob(model_dir + '*.pth'))
+        val = args.model_path
         if not val and val != 0:
             print('---- Trained models ----')
             for i, model in enumerate(pretrained_models):
@@ -222,8 +222,8 @@ if __name__ == '__main__':
             while (val < 0) or (val >= len(pretrained_models)):
                 print('That index number is not accepted. Please input one of the index numbers above.')
                 val = int(input('\n Which model do you want to use? '))
-        args.pretrained_model = pretrained_models[val]
-    print(args.pretrained_model)
+        args.model_path = pretrained_models[val]
+    print(args.model_path)
 
     if args.attack:
         atk_factors = args.atk_factor

@@ -122,7 +122,7 @@ def setup(phase, args):
     if phase == 'test':
         if args.max_act:
             tags += ['activations']
-        elif config.conversion:
+        elif config['conversion']:
             tags += ['conversion']
     if args.attack:
         tags += ['attack']
