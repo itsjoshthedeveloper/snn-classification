@@ -75,27 +75,24 @@ def setup(phase, args):
         model_path = args.model_path
         conversion = True if 'conversion' in model_path else False
 
-        init_arg = 2
-        hasRunId = find_arg(model_path, model_dir, init_arg).count('-') == 2
-        if hasRunId:
-            init_arg += 1
+        state = torch.load(model_path, map_location='cpu')
+        old_config = state['config']
 
-        model_type = ('snn' if conversion else find_arg(model_path, model_dir, init_arg))
-        dataset = find_arg(model_path, model_dir, init_arg+2)
+        model_type = ('snn' if conversion else old_config['model_type'])
 
         config = dict(
             # Model
             model_path          = model_path,
             conversion          = conversion,
             model_type          = model_type,
-            architecture        = (find_arg(model_path, model_dir, init_arg+1).lower()),
-            kernel_size         = args.kernel_size,
+            architecture        = old_config['architecture'],
+            kernel_size         = old_config['kernel_size'],
             pretrained          = None,
             # Dataset
-            dataset             = dataset_cfg[dataset],
+            dataset             = old_config['dataset'],
             batch_size          = (args.batch_size if conversion else None),
             batch_size_test     = args.batch_size,
-            img_size            = (img_sizes[dataset] if args.img_size == -1 else (args.img_size, args.img_size)),
+            img_size            = old_config['img_size'],
             augment             = None,
             attack              = (args.attack if args.attack else False),
             atk_factor          = (args.atk_factor if (args.atk_factor or args.atk_factor == 0) else False),
@@ -104,9 +101,9 @@ def setup(phase, args):
             lr                  = None,
             optimizer           = None,
             # LIF neuron
-            timesteps           = (args.timesteps if model_type == 'snn' else None),
-            leak_mem            = (args.leak_mem if model_type == 'snn' else None),
-            def_threshold       = (args.def_threshold if model_type == 'snn' else None),
+            timesteps           = old_config['timesteps'],
+            leak_mem            = old_config['leak_mem'],
+            def_threshold       = old_config['def_threshold'],
             scaling_factor      = (args.scaling_factor if conversion else None),
             # Visualization
             plot_batch          = args.plot_batch,

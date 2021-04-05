@@ -168,19 +168,14 @@ if __name__ == '__main__':
 
     # Model
     p.add_argument('--model_path',      default='',                 type=str,       help='pretrained model path')
-    p.add_argument('--kernel_size',     default=3,                  type=int,       help='filter size for the conv layers')
 
     # Dataset
     p.add_argument('--batch_size',      default=128,                type=int,       help='Batch size')
-    p.add_argument('--img_size',        default=32,                 type=int,       help='Image size')
     p.add_argument('--augment',         action='store_true',                        help='turn on data augmentation')
     p.add_argument('--attack',          default='',                 type=str,       help='adversarial attack', choices=['saltpepper','gaussiannoise'])
     p.add_argument('--atk_factor',      default=None,               type=float,     help='Attack constant (sigma/p/scale)', nargs='+')
 
     # LIF neuron
-    p.add_argument('--timesteps',       default=20,                 type=int,       help='Number of time-step')
-    p.add_argument('--leak_mem',        default=0.99,               type=float,     help='Leak_mem')
-    p.add_argument('--def_threshold',   default=1.0,                type=float,     help='Membrane threshold')
     p.add_argument('--scaling_factor',  default=0.7,                type=float,     help='scaling factor for thresholds')
     p.add_argument('--reset_thresholds',action='store_true',                        help='find new thresholds for this number of timesteps')
 
