@@ -173,7 +173,7 @@ if __name__ == '__main__':
     p.add_argument('--batch_size',      default=128,                type=int,       help='Batch size')
     p.add_argument('--augment',         action='store_true',                        help='turn on data augmentation')
     p.add_argument('--attack',          default='',                 type=str,       help='adversarial attack', choices=['saltpepper','gaussiannoise'])
-    p.add_argument('--atk_factor',      default=None,               type=float,     help='Attack constant (sigma/p/scale)', nargs='+')
+    p.add_argument('--atk_factor',      default=None,               type=float,     help='Attack constant (sigma/p/scale)')
 
     # LIF neuron
     p.add_argument('--scaling_factor',  default=0.7,                type=float,     help='scaling factor for thresholds')
@@ -204,8 +204,6 @@ if __name__ == '__main__':
     if args.attack and (not args.atk_factor):
         raise RuntimeError('You must provide an attack (sigma/p/scale) constant with the --attack command')
 
-    scriptStart = datetime.datetime.now()
-
     if args.model_path and args.model_path.isdigit():
         args.model_path = int(args.model_path)
 
@@ -225,44 +223,25 @@ if __name__ == '__main__':
         args.model_path = pretrained_models[val]
     print(args.model_path)
 
+
+    #--------------------------------------------------
+    # Setup
+    #--------------------------------------------------
+    factor = 'no atk' if args.atk_factor == None else args.atk_factor
     if args.attack:
-        atk_factors = args.atk_factor
-    else:
-        atk_factors = ['no attack']
+        args.file_name = args.attack + '-' + str(factor)
 
-    accs = []
-    durations = []
+    run, f, config, testloader, model, now = setup('test', args)
 
-    for factor in atk_factors:
+    with run:
         #--------------------------------------------------
-        # Setup
+        # Evaluate the model
         #--------------------------------------------------
-        args.atk_factor = None if (factor == 'no attack') else factor
-        if args.attack:
-            args.file_name = args.attack + '-' + str(factor)
+        f.write('********** ({}) {} evaluation **********'.format(factor, config.model_type.upper()))
+        max_acc = test('test', f, config, args, testloader, model)
 
-        run, f, config, testloader, model, now = setup('test', args)
-
-        with run:
-            #--------------------------------------------------
-            # Evaluate the model
-            #--------------------------------------------------
-            f.write('********** ({}) {} evaluation **********'.format(factor, config.model_type.upper()))
-            max_acc = test('test', f, config, args, testloader, model)
-
-            duration = datetime.timedelta(days=(datetime.datetime.now() - now).days, seconds=(datetime.datetime.now() - now).seconds)
-            f.write('({}) Accuracy: {:.6f}'.format(factor, max_acc), r_white=True, terminal=True)
-            f.write('({}) Run time: {}'.format(factor, duration), terminal=True)
-
-            accs.append(max_acc)
-            durations.append(duration)
-
-    if len(atk_factors) > 1:
-        print('\n********** Final Results **********')
-        
-        for factor, acc, duration in zip(atk_factors, accs, durations):
-            print('({}) Accuracy: {:.6f} [{}]'.format(factor, acc, duration))
-            
-        print('Total script time: {}'.format(datetime.timedelta(days=(datetime.datetime.now() - scriptStart).days, seconds=(datetime.datetime.now() - scriptStart).seconds)))
+    duration = datetime.timedelta(days=(datetime.datetime.now() - now).days, seconds=(datetime.datetime.now() - now).seconds)
+    f.write('({}) Accuracy: {:.6f}'.format(factor, max_acc), r_white=True, terminal=True)
+    f.write('({}) Run time: {}'.format(factor, duration), terminal=True)
 
     sys.exit(0)
