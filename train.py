@@ -140,9 +140,6 @@ with run:
                 min_loss = train_loss.avg
                 wandb.run.summary['best_loss'] = min_loss
 
-        if epoch == 1:
-            wandb.log({'accuracy': 0, 'max_acc': max_acc}, step=epoch)
-
         if args.first or ((epoch) % args.test_display == 0):
             max_acc = test('train', f, config, args, testloader, model, state, epoch, max_acc, start_time=start_time)
 
