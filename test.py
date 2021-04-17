@@ -196,27 +196,27 @@ if __name__ == '__main__':
 
     # Dataset
     p.add_argument('--batch_size',      default=128,                type=int,       help='Batch size')
-    p.add_argument('--augment',         default=False, const=True,  type=str2bool,  help='turn on data augmentation')
+    p.add_argument('--augment',         default=False, const=True,  type=str2bool,  help='turn on data augmentation', nargs='?')
     p.add_argument('--attack',          default='',                 type=str,       help='adversarial attack', choices=['saltpepper','gaussiannoise'])
     p.add_argument('--atk_factor',      default=None,               type=float,     help='Attack constant (sigma/p/scale)')
 
     # LIF neuron
     p.add_argument('--scaling_factor',  default=0.7,                type=float,     help='scaling factor for thresholds')
-    p.add_argument('--reset_thresholds',default=False, const=True,  type=str2bool,  help='find new thresholds for this number of timesteps')
+    p.add_argument('--reset_thresholds',default=False, const=True,  type=str2bool,  help='find new thresholds for this number of timesteps', nargs='?')
 
     # Visualization
-    p.add_argument('--plot',            default=False, const=True,  type=str2bool,  help='plot images')
+    p.add_argument('--plot',            default=False, const=True,  type=str2bool,  help='plot images', nargs='?')
     p.add_argument('--plot_batch',      default=1,                  type=int,       help='batch to plot')
     p.add_argument('--plot_labels',     default=True, const=True,   type=str2bool,  help='plot images with labels', nargs='?')
     p.add_argument('--max_act',         default='',                 type=str,       help='only get max activations', choices=['pixel-img','channel-norm','pixel-norm'])
-    p.add_argument('--see_model',       default=False, const=True,  type=str2bool,  help='see model structure')
+    p.add_argument('--see_model',       default=False, const=True,  type=str2bool,  help='see model structure', nargs='?')
     p.add_argument('--info',            default=True, const=True,   type=str2bool,  help='see training info', nargs='?')
-    p.add_argument('--count_spikes',    default=False, const=True,  type=str2bool,  help='count spikes')
+    p.add_argument('--count_spikes',    default=False, const=True,  type=str2bool,  help='count spikes', nargs='?')
 
     # Dev tools
-    p.add_argument('--debug',           default=False, const=True,  type=str2bool,  help='enable debugging mode')
-    p.add_argument('--first',           default=False, const=True,  type=str2bool,  help='only debug first epoch and first ten batches')
-    p.add_argument('--print_models',    default=False, const=True,  type=str2bool,  help='only print available trained models')
+    p.add_argument('--debug',           default=False, const=True,  type=str2bool,  help='enable debugging mode', nargs='?')
+    p.add_argument('--first',           default=False, const=True,  type=str2bool,  help='only debug first epoch and first ten batches', nargs='?')
+    p.add_argument('--print_models',    default=False, const=True,  type=str2bool,  help='only print available trained models', nargs='?')
 
     global args
     args = p.parse_args()
