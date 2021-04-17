@@ -70,6 +70,7 @@ def setup(phase, args):
             scaling_factor      = None,
             # Visualization
             plot_batch          = args.plot_batch,
+            count_spikes        = None,
         )
     elif phase == 'test':
         model_path = args.model_path
@@ -107,6 +108,7 @@ def setup(phase, args):
             scaling_factor      = (args.scaling_factor if conversion else None),
             # Visualization
             plot_batch          = args.plot_batch,
+            count_spikes        = args.count_spikes,
         )
 
     #--------------------------------------------------
@@ -124,7 +126,9 @@ def setup(phase, args):
             tags += ['activations']
         elif config['conversion']:
             tags += ['conversion']
-    if args.attack:
+        if config['count_spikes']:
+            tags += ['count spikes']
+    if config['attack']:
         tags += ['attack']
 
     # Start a run, tracking hyperparameters

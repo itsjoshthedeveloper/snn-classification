@@ -186,6 +186,7 @@ if __name__ == '__main__':
     p.add_argument('--max_act',         default='',                 type=str,       help='only get max activations', choices=['pixel-img','channel-norm','pixel-norm'])
     p.add_argument('--see_model',       action='store_true',                        help='see model structure')
     p.add_argument('--info',            default=True, const=True,   type=str2bool,  help='see training info', nargs='?')
+    p.add_argument('--count_spikes',    action='store_true',                        help='count spikes')
 
     # Dev tools
     p.add_argument('--debug',           action='store_true',                        help='enable debugging mode')
