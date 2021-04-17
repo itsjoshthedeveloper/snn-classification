@@ -216,6 +216,7 @@ if __name__ == '__main__':
     # Dev tools
     p.add_argument('--debug',           action='store_true',                        help='enable debugging mode')
     p.add_argument('--first',           action='store_true',                        help='only debug first epoch and first ten batches')
+    p.add_argument('--print_models',    action='store_true',                        help='only print available trained models')
 
     global args
     args = p.parse_args()
@@ -230,6 +231,9 @@ if __name__ == '__main__':
     if args.attack and (not args.atk_factor):
         raise RuntimeError('You must provide an attack (sigma/p/scale) constant with the --attack command')
 
+    if args.print_models and args.model_path:
+        raise RuntimeError('You can\'t use the --model_path command with the --print_models command')
+
     if args.model_path and args.model_path.isdigit():
         args.model_path = int(args.model_path)
 
@@ -242,6 +246,8 @@ if __name__ == '__main__':
             print('---- Trained models ----')
             for i, model in enumerate(pretrained_models):
                 print('{}: {}'.format(i, model[17:]))
+            if args.print_models:
+                exit()
             val = int(input('\n Which model do you want to use? '))
             while (val < 0) or (val >= len(pretrained_models)):
                 print('That index number is not accepted. Please input one of the index numbers above.')
