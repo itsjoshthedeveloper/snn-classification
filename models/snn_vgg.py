@@ -45,6 +45,8 @@ class SNN_VGG(nn.Module):
         self.def_threshold = config.def_threshold
         self.spike_fn       = init_spike_fn(grad_type)
         self.input_layer 	= PoissonGenerator()
+
+        self.count_spikes = config.count_spikes
         
         self._make_layers()
         self._init_layers()
@@ -59,15 +61,19 @@ class SNN_VGG(nn.Module):
                 state_vgg = vgg.features.state_dict()
                 self.features.load_state_dict(state_vgg, strict=False)
 
-        if config.count_spikes:
+        if self.count_spikes:
             # Make AverageMeterNetwork for measuring spikes
             model_length = len(self.features) + len(self.classifier) - 1
             self.spikes = AverageMeterNetwork(model_length)
 
             mem_features, mem_classifier = self.init_mems(1)
             for i in range(model_length):
-                layer_shape = mem_features[i] if i < len(mem_features) else mem_classifier[i-len(mem_features)]
-                neurons = layer_shape[1] * layer_shape[2] * layer_shape[3]
+                if i < len(mem_features):
+                    layer_shape = mem_features[i].shape
+                    neurons = layer_shape[1] * layer_shape[2] * layer_shape[3]
+                else:
+                    layer_shape = mem_classifier[i-len(mem_features)].shape
+                    neurons = layer_shape[1]
                 self.spikes.updateUnits(i, neurons)
     
     def _make_layers(self):
@@ -190,7 +196,7 @@ class SNN_VGG(nn.Module):
         N, C, H, W = x.size()
         # print('input size', N, C, H, W)
 
-        if config.count_spikes:
+        if self.count_spikes:
             self.spikes.updateCount(N)
 
         mem_features, mem_classifier = self.init_mems(N)
@@ -216,7 +222,7 @@ class SNN_VGG(nn.Module):
                 mem_features[k]     = mem_features[k] - rst
                 out_prev            = out.clone()
 
-                if config.count_spikes:
+                if self.count_spikes:
                     self.spikes.updateSum(k, torch.sum(out.detach().clone()).item())
 
                 if str(k) in self.pool_features.keys():
@@ -244,7 +250,7 @@ class SNN_VGG(nn.Module):
                 mem_classifier[k]   = mem_classifier[k] - rst
                 out_prev            = out.clone()
 
-                if config.count_spikes:
+                if self.count_spikes:
                     self.spikes.updateSum((prev+k), torch.sum(out.detach().clone()).item())
 
                 if str(k) in self.pool_classifier.keys():
