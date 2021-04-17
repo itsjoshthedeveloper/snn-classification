@@ -4,7 +4,9 @@
 import torch
 import torch.nn as nn
 import torchvision
+
 from .spikes import *
+from .net_utils import AverageMeterNetwork
 
 cfg_features = {
     'vgg5' : [64, 'avg', 128, 128, 'avg'],
@@ -57,6 +59,15 @@ class SNN_VGG(nn.Module):
                 state_vgg = vgg.features.state_dict()
                 self.features.load_state_dict(state_vgg, strict=False)
 
+        # Make AverageMeterNetwork for measuring spikes
+        model_length = len(self.features) + len(self.classifier) - 1
+        self.spikes = AverageMeterNetwork(model_length)
+
+        mem_features, mem_classifier = self.init_mems(1)
+        for i in range(model_length):
+            layer_shape = mem_features[i] if i < len(mem_features) else mem_classifier[i-len(mem_features)]
+            neurons = layer_shape[1] * layer_shape[2] * layer_shape[3]
+            self.spikes.updateUnits(i, neurons)
     
     def _make_layers(self):
         affine_flag = True
@@ -178,6 +189,8 @@ class SNN_VGG(nn.Module):
         N, C, H, W = x.size()
         # print('input size', N, C, H, W)
 
+        self.spikes.updateCount(N)
+
         mem_features, mem_classifier = self.init_mems(N)
 
         max_mem = 0.0
@@ -200,6 +213,8 @@ class SNN_VGG(nn.Module):
                 rst                 = (mem_thr > 0) * self.features[k].threshold
                 mem_features[k]     = mem_features[k] - rst
                 out_prev            = out.clone()
+
+                self.spikes.updateSum(k, torch.sum(out.detach().clone()).item())
 
                 if str(k) in self.pool_features.keys():
                     out = self.pool_features[str(k)](out_prev)
@@ -225,6 +240,8 @@ class SNN_VGG(nn.Module):
                 rst                 = (mem_thr > 0) * self.classifier[k].threshold
                 mem_classifier[k]   = mem_classifier[k] - rst
                 out_prev            = out.clone()
+
+                self.spikes.updateSum((prev+k), torch.sum(out.detach().clone()).item())
 
                 if str(k) in self.pool_classifier.keys():
                     out = self.pool_classifier[str(k)](out_prev)
