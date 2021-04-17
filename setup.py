@@ -200,6 +200,10 @@ def setup(phase, args):
     else:
         raise RuntimeError("dataset not valid..")
 
+    if phase == 'train' or config.conversion:
+        f.write('loaded {} train split [{} samples]'.format(config.dataset['name'], (len(trainloader)*config.batch_size)))
+    f.write('loaded {} test split [{} samples]'.format(config.dataset['name'], (len(testloader)*config.batch_size_test)))
+
     #--------------------------------------------------
     # Instantiate the model and optimizer
     #--------------------------------------------------
