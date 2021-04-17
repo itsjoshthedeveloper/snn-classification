@@ -157,7 +157,7 @@ def setup(phase, args):
     f.write('Run on time: {}'.format(now))
     f.write('Identifier: {}'.format(config.identifier))
     if phase == 'test':
-        f.write('Pretrained {}: {}'.format(config.model_type.upper(), config.model_path))
+        f.write('Pretrained {}: {}'.format(config.model_type.upper(), args.model_path))
         if config.conversion:
             f.write('==== Converting ANN -> SNN [layer-wise thresholding] ====')
     
@@ -223,14 +223,14 @@ def setup(phase, args):
         f.write(model)
 
     if phase == 'test':
-        state = torch.load(config.model_path, map_location='cpu')
+        state = torch.load(args.model_path, map_location='cpu')
         model.load_state_dict(state['state_dict'], strict=False)
 
         if config.conversion:
             # If thresholds present in loaded ANN file
             if (not args.reset_thresholds) and ('thresholds' in state.keys()) and (str(config.timesteps) in state['thresholds'].keys()):
                 thresholds = state['thresholds'][str(config.timesteps)]
-                f.write('Loaded layer thresholds ({}) from {}'.format(config.timesteps, config.model_path))
+                f.write('Loaded layer thresholds ({}) from {}'.format(config.timesteps, args.model_path))
                 model.threshold_update(scaling_factor=config.scaling_factor, thresholds=thresholds[:])
             else:
                 thresholds = find_threshold(f, trainloader, model, config.batch_size_test, config.timesteps)
@@ -240,8 +240,8 @@ def setup(phase, args):
                 if ('thresholds' not in state.keys()) or (not isinstance(state['thresholds'], dict)):
                     state['thresholds'] = {}
                 state['thresholds'][str(config.timesteps)] = thresholds
-                torch.save(state, config.model_path)
-                f.write('Saved layer thresholds ({}) in {}'.format(config.timesteps, config.model_path))
+                torch.save(state, args.model_path)
+                f.write('Saved layer thresholds ({}) in {}'.format(config.timesteps, args.model_path))
 
     if phase == 'train':
         # Configure the loss function and optimizer
