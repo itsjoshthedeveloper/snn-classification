@@ -82,6 +82,31 @@ def test(phase, f, config, args, testloader, model, state=None, epoch=0, max_acc
     if phase == 'test' and args.max_act:
         plot_max_activations(f, args, recorder)
 
+    if args.count_spikes:
+        f.write('Average total spikes per example per layer: {}'.format(model.spikes.average()))
+        f.write('Average neuronal spike rate per example per layer: {}'.format(model.spikes.rate()))
+        f.write('Neurons per layer: {}'.format(model.spikes.units))
+
+        f.write('Average total spikes per example: {}'.format(model.spikes.totalAverage()))
+        f.write('Average neuronal spike rate per example: {}'.format(model.spikes.totalRate()))
+
+        label, value, title = "layer", "total spikes per example", "Total Spikes Per Layer"
+        data = [[i+1, val] for (i, val) in enumerate(model.spikes.average())]
+        table = wandb.Table(data=data, columns=[label, value])
+        wandb.log({"total_spikes_per_layer" : wandb.plot_table("itsjosh/vertical_bar_chart", table, {"label": label, "value": value}, {"title": title})}, step=epoch)
+
+        value, title = "neuronal spike rate per example", "Neuronal Spike Rate Per Layer"
+        data = [[i+1, val] for (i, val) in enumerate(model.spikes.rate())]
+        table = wandb.Table(data=data, columns=[label, value])
+        wandb.log({"spike_rate_per_layer" : wandb.plot_table("itsjosh/vertical_bar_chart", table, {"label": label, "value": value}, {"title": title})}, step=epoch)
+
+        value, title = "neurons", "Neurons Per Layer"
+        data = [[i+1, val] for (i, val) in enumerate(model.spikes.units)]
+        table = wandb.Table(data=data, columns=[label, value])
+        wandb.log({"neurons_per_layer" : wandb.plot_table("itsjosh/vertical_bar_chart", table, {"label": label, "value": value}, {"title": title})}, step=epoch)
+
+        wandb.log({"total_spikes": model.spikes.totalAverage(), "spike_rate": model.spikes.totalRate(), "total_neurons": model.spikes.totalUnits()}, step=epoch)
+
     test_acc = np.mean(acc_top1)
 
     if test_acc > max_acc:
