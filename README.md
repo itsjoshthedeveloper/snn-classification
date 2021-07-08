@@ -1,3 +1,3 @@
 # SNN Classification Template
 
-Template for spiking neural network on classification.
+A template for spiking neural networks on classification.
