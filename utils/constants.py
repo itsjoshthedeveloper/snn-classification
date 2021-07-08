@@ -13,12 +13,12 @@ img_sizes = dict(
 # Dataset Config Class
 class DatasetConfig():
 
-    def __init__(self, name, input_dim):
+    def __init__(self, name, input_dim, hasClasses=True, path=''):
         self.name = name
-        self.labels = labels[self.name]
-        self.num_cls = len(labels[self.name])
-        self.input_dim = 3
-        self.path = '/project/panda/shared/' + self.name
+        self.labels = labels[self.name] if hasClasses else None
+        self.num_cls = len(labels[self.name]) if hasClasses else None
+        self.input_dim = input_dim
+        self.path = path if path else ('/project/panda/shared/' + self.name)
         self.img_size = img_sizes[self.name]
 
     def dictionary(self):
