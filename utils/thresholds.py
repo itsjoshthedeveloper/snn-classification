@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 
-def find_threshold(f, loader, model, batch_size, timesteps=20):
+def find_thresholds(f, loader, model, batch_size, timesteps=20):
     thresholds = []
     
     def find(layer):

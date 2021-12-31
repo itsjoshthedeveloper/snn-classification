@@ -233,7 +233,7 @@ def setup(phase, args):
                 f.write('Loaded layer thresholds ({}) from {}'.format(config.timesteps, args.model_path))
                 model.threshold_update(scaling_factor=config.scaling_factor, thresholds=thresholds[:])
             else:
-                thresholds = find_threshold(f, trainloader, model, config.batch_size_test, config.timesteps)
+                thresholds = find_thresholds(f, trainloader, model, config.batch_size_test, config.timesteps)
                 model.threshold_update(scaling_factor=config.scaling_factor, thresholds=thresholds[:])
                 
                 # Save the threhsolds in the ANN file
