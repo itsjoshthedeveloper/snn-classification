@@ -6,6 +6,7 @@
 # Imports
 #--------------------------------------------------
 import torch
+import torch.nn as nn
 import torch.backends.cudnn as cudnn
 import torchfunc
 

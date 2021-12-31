@@ -1,6 +1,7 @@
 from matplotlib import pyplot as plt
 from math import ceil
 import wandb
+import numpy as np
 
 
 def plot_max_activations(f, args, recorder):
